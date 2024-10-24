@@ -28,15 +28,15 @@ public class AuthController : ControllerBase
             string query = model.CheckUser();
             LoginModel result = await repository.GetByQuery<LoginModel>(query);
             if (result != null)
-                {
-                    var userRol = result.rol;
-                    var token = GenerateAccessToken(model.Username,userRol);
-                    return new DataResponse<string>(true, 200, "Lista de usuarios", new JwtSecurityTokenHandler().WriteToken(token));
-                }
-                else
-                {
-                    return new BaseResponse(false, 204, "No hay usuarios cargados!");
-                }
+            {
+                var userRol = result.rol;
+                var token = GenerateAccessToken(model.Username, userRol);
+                return new DataResponse<string>(true, 200, "Lista de usuarios", new JwtSecurityTokenHandler().WriteToken(token));
+            }
+            else
+            {
+                return new BaseResponse(false, 204, "No hay usuarios cargados!");
+            }
         }
         catch (Exception ex)
         {

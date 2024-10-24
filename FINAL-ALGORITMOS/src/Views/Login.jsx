@@ -1,16 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FunctionButton from "../Components/FunctionButton";
 import { POST } from "../Services/Fetch";
 import "../assets/login.css"
 import { useNavigate } from "react-router-dom";
+import Input from "../Components/Input";
 
 export default function Login(props) {
     const navigate = useNavigate();
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
+    
+
     async function log(){
-        props.setUser = await POST({},);
-        navigate("");
+        var rsp = await POST({username: username, password: password}, "/Auth/Login");
+        if(rsp != null){
+            props.setUser(rsp);
+            navigate("/Home");
+        }else{
+
+        }
     }
 
     return (
@@ -21,12 +30,16 @@ export default function Login(props) {
                     <form>
                         <div className="mb-3">
                             <label htmlFor="usuario" className="form-label" style={{ color: '#fff' }}>Usuario</label>
-                            <input type="text" className="form-control" id="usuario" name="usuario" style={{ borderRadius: '10px' }} />
+                            <Input type="text" styles={{ borderRadius: '10px' }} classes={"form-control"} setData={setUsername}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="password" className="form-label" style={{ color: '#fff' }}>Password</label>
-                            <input type="password" className="form-control" id="password" name="password" style={{ borderRadius: '10px' }} />
+                            <Input type="password" styles={{ borderRadius: '10px' }} classes={"form-control"} setData={setPassword}/>
                         </div>
+                        {
+                            errorMessage
+                            setErrorMessage
+                        }
                         <div className="d-flex justify-content-center">
                             <FunctionButton
                                 call=""
