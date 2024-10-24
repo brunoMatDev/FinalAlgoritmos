@@ -9,7 +9,7 @@ using ATDapi.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
-[Route("/api/")]
+[Route("/products/")]
 public class productController : ControllerBase
 {
     private IConfiguration _configuration;
@@ -41,8 +41,6 @@ public class productController : ControllerBase
             return new BaseResponse(false, 500, ex.Message);
         }
     }
-
-    
     
     [HttpPost("SelectById")]
     public async Task<BaseResponse> SelectByID(int ID){
@@ -63,4 +61,6 @@ public class productController : ControllerBase
 
         }
     }
+
+    
 }

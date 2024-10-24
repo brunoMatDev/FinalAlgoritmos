@@ -9,7 +9,7 @@ using ATDapi.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
-[Route("/api/")]
+[Route("/Auth/")]
 public class AuthController : ControllerBase
 {
     private IConfiguration _configuration;
