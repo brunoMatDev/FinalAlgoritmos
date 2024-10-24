@@ -25,7 +25,7 @@ public class productController : ControllerBase
     {
         try
         {
-            string query = "SELECT nombre, precio from productos;";
+            string query = "SELECT id, nombre, precio, img from productos;";
             var result = await repository.GetListBy<productModel>(query);
             if (result != null)
                 {
@@ -61,6 +61,8 @@ public class productController : ControllerBase
 
         }
     }
+
+
 
     
 }
