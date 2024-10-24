@@ -25,8 +25,12 @@ public class productController : ControllerBase
     {
         try
         {
-            string query = "SELECT nombre, precio from productos;";
-            var result = await repository.GetListBy<productModel>(query);
+            string query = "SELECT id, nombre, precio, img from productos;";
+            productModel result = await repository.GetListBy<productModel>(query);
+            if(System.IO.File.Exists(result.img)){
+                byte[] image = System.IO.File.ReadAllBytes(result.img);
+                result.image = Convert.ToBase64String(imageBytes);
+            }
             if (result != null)
                 {
                     return new DataResponse<List<productModel>>(true, 200, "Lista de productos", result);
@@ -61,6 +65,8 @@ public class productController : ControllerBase
 
         }
     }
+
+
 
     
 }
