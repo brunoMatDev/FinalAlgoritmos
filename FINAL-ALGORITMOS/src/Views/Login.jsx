@@ -36,10 +36,6 @@ export default function Login(props) {
                             <label htmlFor="password" className="form-label" style={{ color: '#fff' }}>Password</label>
                             <Input type="password" styles={{ borderRadius: '10px' }} classes={"form-control"} setData={setPassword}/>
                         </div>
-                        {
-                            errorMessage
-                            setErrorMessage
-                        }
                         <div className="d-flex justify-content-center">
                             <FunctionButton
                                 call=""
