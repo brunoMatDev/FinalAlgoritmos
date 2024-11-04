@@ -10,15 +10,15 @@ export default function Login(props) {
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
-    
 
     async function log(){
-        var rsp = await POST({username: username, password: password}, "/Auth/Login");
+        var rsp = await POST("Auth/Login", {username: username, password: password});
+
         if(rsp != null){
             props.setUser(rsp);
             navigate("/Home");
         }else{
-
+            setErrorMessage(rsp?.message);
         }
     }
 
@@ -37,12 +37,14 @@ export default function Login(props) {
                             <Input type="password" styles={{ borderRadius: '10px' }} classes={"form-control"} setData={setPassword}/>
                         </div>
                         {
-                            errorMessage
-                            setErrorMessage
+                            errorMessage && 
+                            <div>
+                                {errorMessage}
+                            </div>
                         }
                         <div className="d-flex justify-content-center">
                             <FunctionButton
-                                call=""
+                                callback={log}
                                 text="Ingresar"
                                 classes="btn btn-primary"
                                 style={{ backgroundColor: '#6e8efb', border: 'none', padding: '10px 20px', fontSize: '18px', borderRadius: '10px', transition: '0.3s' }}
