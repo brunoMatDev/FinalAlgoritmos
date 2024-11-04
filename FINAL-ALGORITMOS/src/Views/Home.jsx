@@ -23,20 +23,20 @@ const Home = () =>{
     }, []);
 
     return(
-        <>
-        {product.length > 0 ? (
-            product.map((item,index) =>(
-                <ProductCard
-                imageUrl = {item.img}
-                tittle= {item.nombre}
-                price = {item.precio}
-                />
-            ))
-        ) : (
-            <div className="text-gray-600 text-center">No se encontraron usuarios.</div>
-        )}
-
-        </>
+        <div className="container mt-5">
+            <h1 className="text-center mb-4">Lista de Productos</h1>
+            <div className="row">
+                {product.map(product => (
+                    <div className="col-md-4 mb-4" key={product.id}>
+                        <ProductCard
+                            title={product.nombre}
+                            price={product.precio}
+                            imageUrl={product.img} // Asumiendo que image es un string en base64
+                        />
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 
 }

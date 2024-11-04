@@ -1,9 +1,14 @@
 export default function ProductCard(props) {
     return (
-        <div className="product-card">
-            <img src={props.imageUrl} alt={props.title} className="product-image" />
-            <h2 className="product-title">{props.title}</h2>
-            <p className="product-price">${props.price}</p>
+        <div className="card h-100">
+            <img src={props.imageUrl} alt={props.title} className="card-img-top" />
+            <div className="card-body">
+                <h5 className="card-title">{props.title}</h5>
+                <p className="card-text">${props.price}</p>
+            </div>
+            <div className="card-footer">
+                <button className="btn btn-primary btn-block">Agregar al carrito</button>
+            </div>
         </div>
     );
 }
