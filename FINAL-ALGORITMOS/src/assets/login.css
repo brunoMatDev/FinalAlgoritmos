@@ -1,5 +1,7 @@
 body {
-    background-color: #3597d8;    
+    background-image: url("../../public/images/padlock.jpg");  
+    background-repeat: no-repeat;
+    background-size: 100% 120%;
     margin: 0;
     font-family:'Playwrite England SemiJoined';
 }
@@ -14,6 +16,15 @@ h1 {
 
 .container {
     background-color: #f8f9fa; /* Color del contenedor */
+}
+
+.inputs{
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 40px;
+  padding: 0;
+
 }
 
 .card {
@@ -32,7 +43,7 @@ h1 {
 
 .form-control {
     border-radius: 5px; /* Bordes redondeados para inputs */
-    border: 1px solid #0d6efd; /* Borde azul */
+    border: 1px solid #4f95ff; /* Borde azul */
 }
 
 .form-control:focus {

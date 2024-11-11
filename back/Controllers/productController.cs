@@ -17,7 +17,7 @@ public class productController : ControllerBase
 
     public productController(IConfiguration configuration)
     {
-        this._configuration = configuration;
+        _configuration = configuration;
     }
 
     [HttpGet("ListaProductos")]

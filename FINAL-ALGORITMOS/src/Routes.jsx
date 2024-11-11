@@ -2,7 +2,7 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Views/Login";
 import Home from "./Views/Home";
-function App() {
+export default function App() {
   const [user, setUser] = useState(null);
 
   return (
@@ -20,4 +20,4 @@ function App() {
   );
 }
 
-export default App;
+

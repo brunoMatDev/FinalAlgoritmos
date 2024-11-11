@@ -6,8 +6,6 @@ const Home = () =>{
     const[product, SetProducts] = useState([]);
     const [error, setError] = useState(null);
 
-
-
     useEffect(() => {
         const fetchProducts = async () => {
             const response = await GET("products/ListaProductos");

@@ -5,6 +5,6 @@ export default function Input(props){
     }
     
     return(
-        <input type={props.type} style={props.styles} className={props.classes} onChange={callback}>{props.name}</input>
+        <input type={props.type} style={props.styles} className={props.classes} onChange={callback} maxLength={props.max} value={props.description}></input>
     );
 } 
