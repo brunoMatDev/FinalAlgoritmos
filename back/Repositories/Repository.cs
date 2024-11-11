@@ -12,7 +12,6 @@ namespace ATDapi.Repositories;
     {
         private string dbConnectionString = "DRIVER={ODBC Driver 18 for SQL Server};SERVER=server-terciario.hilet.com,11333;DATABASE=carrito_de_bruno;UID=sa;PWD=1234!\"qwerQW;TrustServerCertificate=yes;";
         //Traigo la cadena de conexion que correspona dependiendo del caso de uso dentro del constructor
-        public Repository(){}
         public async Task<int> DeleteAsync(string query)
         {
             using (OdbcConnection connection = new OdbcConnection(dbConnectionString))
@@ -22,7 +21,7 @@ namespace ATDapi.Repositories;
         }
 
         //Query que trae una sola fila de la tabla
-        public async Task<T> GetByQuery<T>(string query)
+        public async Task<T> GetOneByQuery<T>(string query)
         {
             using (OdbcConnection connection = new OdbcConnection(dbConnectionString))
             {

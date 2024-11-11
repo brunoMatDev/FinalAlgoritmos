@@ -9,94 +9,95 @@ using ATDapi.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
-[Route("/Auth/")]
+[Route("Auth")]
 public class AuthController : ControllerBase
 {
-    private IConfiguration _configuration;
-    private Repository repository = new Repository();
+  private IConfiguration _configuration;
+  private Repository repository = new Repository();
 
-    public AuthController(IConfiguration configuration)
+  public AuthController(IConfiguration configuration)
+  {
+    this._configuration = configuration;
+  }
+
+  [HttpPost("Login")]
+  public async Task<IActionResult> Login(LogInModel model)
+  {
+    try
     {
-        this._configuration = configuration;
+      string query = model.CheckUser();
+      UserLogedModel? result = await repository.GetOneByQuery<UserLogedModel>(query);
+      if (result != null)
+      {
+        string userRol = result.Rol;
+        JwtSecurityToken claims = GenerateAccessToken(model.Username, userRol);
+        string token = new JwtSecurityTokenHandler().WriteToken(claims);
+        return Ok(new{ error = false, token});
+      }
+      else
+      {
+        return Unauthorized(new {error = true, message = "El usuario y contraseña son incorrectos"} );
+      }
     }
-
-    [HttpPost("Login")]
-    public async Task<BaseResponse> Login([FromBody] LoginModel model)
+    catch (Exception ex)
     {
-        try
-        {
-            string query = model.CheckUser();
-            LoginModel result = await repository.GetByQuery<LoginModel>(query);
-            if (result != null)
-            {
-                var userRol = result.rol;
-                var token = GenerateAccessToken(model.Username, userRol);
-                return new DataResponse<string>(true, 200, "Lista de usuarios", new JwtSecurityTokenHandler().WriteToken(token));
-            }
-            else
-            {
-                return new BaseResponse(false, 204, "No hay usuarios cargados!");
-            }
-        }
-        catch (Exception ex)
-        {
-            return new BaseResponse(false, 500, ex.Message);
-        }
+      return StatusCode(500, new {error = true, message = "Ha ocurrido un error al momento de realizar la peticion, por favor contacte con el administrador"} );
     }
+  }
 
-    [HttpGet("listar")]
-    [Authorize]
-    public async Task<BaseResponse> listar()
+  [HttpGet("listar")]
+  [Authorize]
+  public async Task<BaseResponse> Listar()
+  {
+    try
     {
-        try
-        {
-            var rol = HttpContext.User.Claims.ElementAtOrDefault(1).Value;
+      string rol = HttpContext.User.Claims.ElementAtOrDefault(1).Value;
 
-            if (rol != "administrator")
-            {
-                return new BaseResponse(false, 401, "No tienes permisos para acceder");
-            }
-            else
-            {
-                string query = "SELECT u.username AS Username, u.password AS Password, r.roles AS rol FROM users AS u INNER JOIN roles AS r ON u.rol = r.id ORDER BY u.username ASC;";
-                var result = await repository.GetListBy<LoginModel>(query);
+      if (rol != "administrator")
+      {
+        return new BaseResponse(false, 401, "No tienes permisos para acceder");
+      }
+      else
+      {
+        string query = UserLogedModel.ListUsers();
+        List<UserLogedModel> result = await repository.GetListBy<UserLogedModel>(query);
 
-                if (result != null)
-                {
-                    return new DataResponse<List<LoginModel>>(true, 200, "Lista de usuarios", result);
-                }
-                else
-                {
-                    return new BaseResponse(false, 204, "No hay usuarios cargados!");
-                }
+        // if (result != null)
+        // {
+        //   return new DataResponse<List<LoginModel>>(true, 200, "Lista de usuarios", result);
+        // }
+        // else
+        // {
+          return new BaseResponse(false, 204, "No hay usuarios cargados!");
+        // }
 
-            }
+      }
 
-
-        }
-        catch (Exception ex)
-        {
-            return new BaseResponse(false, 500, $"error:{ex}");
-        }
 
     }
-
-    private JwtSecurityToken GenerateAccessToken(string userName, string rol)
+    catch (Exception ex)
     {
-        var claims = new List<Claim>
+      return new BaseResponse(false, 500, $"error:{ex}");
+    }
+
+  }
+
+  private JwtSecurityToken GenerateAccessToken(string userName, string rol)
+  {
+    var claims = new List<Claim>
         {
             new Claim("username", userName),
             new Claim("rol", rol)
         };
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["JwtSettings:Issuer"],
-            audience: _configuration["JwtSettings:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(30), // Token expiration time
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"])), SecurityAlgorithms.HmacSha256)
-        );
+    var token = new JwtSecurityToken(
+        issuer: _configuration["JwtSettings:Issuer"],
+        audience: _configuration["JwtSettings:Audience"],
+        claims: claims,
+        expires: DateTime.UtcNow.AddMinutes(30), // Token expiration time
+        signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"])), SecurityAlgorithms.HmacSha256)
+    );
 
-        return token;
-    }
+    return token;
+  }
 }

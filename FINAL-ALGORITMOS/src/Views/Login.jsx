@@ -14,18 +14,22 @@ export default function Login(props) {
   const [errorMessage, setErrorMessage] = useState(null);
 
   async function log() {
-    var rsp = await POST("Auth/Login", { username: username, password: password });
-
-    if (rsp != null) {
-      props.setUser(rsp);
-      navigate("/Home");
+    let rsp = await POST("Auth/Login", { username: username, password: password });
+    console.log(rsp);
+    if (rsp != undefined) {
+      if (rsp.error == false) {
+        props.setUser(rsp);
+        navigate("/Home");
+      } else {
+        setErrorMessage(rsp?.message);
+      }
     } else {
-      setErrorMessage(rsp?.message);
+      setErrorMessage("no se puede procesar la peticion en este momento");
     }
   }
 
   return (
-    <div className="container-fluid d-flex justify-content-center align-items-center vh-100">
+    <div className="loginbg container-fluid d-flex justify-content-center align-items-center vh-100">
       <div className="card shadow-lg bg-dark" style={{ width: '400px', borderRadius: '15px', overflow: 'hidden' }}>
         <div className="card-body text-center">
           <h1 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 'bold', color: 'white' }}>Login</h1>
@@ -46,7 +50,7 @@ export default function Login(props) {
             </div>
             {
               errorMessage &&
-              <div>
+              <div class="alert alert-danger" role="alert">
                 {errorMessage}
               </div>
             }

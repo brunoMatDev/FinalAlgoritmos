@@ -9,16 +9,10 @@ using ATDapi.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
-[Route("/products/")]
+[Route("products")]
 public class productController : ControllerBase
 {
-    private IConfiguration _configuration;
     private Repository repository = new Repository();
-
-    public productController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
 
     [HttpGet("ListaProductos")]
     public async Task<BaseResponse> ListaProductos()
@@ -46,7 +40,7 @@ public class productController : ControllerBase
     public async Task<BaseResponse> SelectByID(int ID){
         try{
             string query = $"SELECT id,nombre, precio from productos where id = '{ID}'";
-            var result = await repository.GetByQuery<productModel>(query);
+            var result = await repository.GetOneByQuery<productModel>(query);
             if (result != null)
                 {
                     return new DataResponse<productModel>(true, 200, "Producto encontrado", result);
