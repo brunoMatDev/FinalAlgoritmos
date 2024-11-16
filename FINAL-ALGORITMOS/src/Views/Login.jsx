@@ -1,24 +1,36 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import FunctionButton from "../Components/FunctionButton";
 import { POST } from "../Services/Fetch";
 import "../assets/login.css"
 import { useNavigate } from "react-router-dom";
 import Input from "../Components/Input";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { ClipLoader } from "react-spinners";
+import { userContext } from "../Routes";
 
 
-export default function Login(props) {
+export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const {isLoggedIn, setIsLoggedIn} = useContext(userContext);
+
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    if(token){
+      setIsLoggedIn(setIsLoggedIn);
+    }
+  },[]);
 
   async function log() {
+    setLoading(true);
     let rsp = await POST("Auth/Login", { username: username, password: password });
-    console.log(rsp);
     if (rsp != undefined) {
       if (rsp.error == false) {
-        props.setUser(rsp);
+        localStorage.setItem('token', rsp.token);
+        setIsLoggedIn(true)
         navigate("/Home");
       } else {
         setErrorMessage(rsp?.message);
@@ -26,6 +38,7 @@ export default function Login(props) {
     } else {
       setErrorMessage("no se puede procesar la peticion en este momento");
     }
+    setLoading(false);
   }
 
   return (
@@ -50,17 +63,29 @@ export default function Login(props) {
             </div>
             {
               errorMessage &&
-              <div class="alert alert-danger" role="alert">
+              <div className="alert alert-danger" role="alert">
                 {errorMessage}
               </div>
             }
             <div className="d-flex justify-content-center">
-              <FunctionButton
-                callback={log}
-                text="Ingresar"
-                classes="btn btn-primary"
-                style={{ backgroundColor: '#6e8efb', border: 'none', padding: '10px 20px', fontSize: '18px', borderRadius: '10px', transition: '0.3s' }}
-              />
+              {
+                loading ?
+                  <ClipLoader
+                    loading={loading}
+                    color={"#6600A1"}
+                    size={150}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                  :
+                  <FunctionButton
+                    callback={log}
+                    text="Ingresar"
+                    classes="btn btn-primary"
+                    style={{ backgroundColor: '#6e8efb', border: 'none', padding: '10px 20px', fontSize: '18px', borderRadius: '10px', transition: '0.3s' }}
+                  />
+
+              }
             </div>
           </form>
         </div>

@@ -1,12 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ATDapi.Responses;
 using ATDapi.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using ATDapi.Repositories;
-using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("products")]

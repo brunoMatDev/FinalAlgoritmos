@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ATDapi.Models;
+namespace ATDapi.AuthModels.Models;
 public class LogInModel
 {
     [Required(ErrorMessage = "El nombre de usuario es requerido.")]
@@ -12,6 +12,6 @@ public class LogInModel
     public string? rol { get; set; }
     public string CheckUser()
     {
-        return string.Format("EXEC dbo.validate_user @user = '{0}', @password = '{1}'", Username, Password);
+      return string.Format("EXEC dbo.validate_user @user = '{0}', @password = '{1}'", Username, Password);
     }
 }

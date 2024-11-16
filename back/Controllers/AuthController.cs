@@ -1,28 +1,34 @@
 using Microsoft.AspNetCore.Mvc;
 using ATDapi.Responses;
-using ATDapi.Models;
+using ATDapi.AuthModels.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ATDapi.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using ATDapi.Services;
+using System.Net;
 
 [ApiController]
 [Route("Auth")]
 public class AuthController : ControllerBase
 {
   private IConfiguration _configuration;
-  private Repository repository = new Repository();
+  RequestLogger _requestLogger;
+  private Repository repository = new();
 
-  public AuthController(IConfiguration configuration)
+  public AuthController(IConfiguration configuration, RequestLogger requestLogger)
   {
-    this._configuration = configuration;
+    _configuration = configuration;
+    _requestLogger = requestLogger;
+
   }
 
   [HttpPost("Login")]
   public async Task<IActionResult> Login(LogInModel model)
   {
+    string message;
     try
     {
       string query = model.CheckUser();
@@ -32,15 +38,20 @@ public class AuthController : ControllerBase
         string userRol = result.Rol;
         JwtSecurityToken claims = GenerateAccessToken(model.Username, userRol);
         string token = new JwtSecurityTokenHandler().WriteToken(claims);
+        message = string.Format("El usuario: {0}, id: {1}, inicio sesion exitosamente", result.Username, result.Id);
+        await _requestLogger.SaveLog(HttpContext, 200, message);
         return Ok(new{ error = false, token});
       }
       else
       {
+        message = string.Format("Se intento iniciar sesion con el username: {0}", model.Username);
+        await _requestLogger.SaveLog(HttpContext, 401, message);
         return Unauthorized(new {error = true, message = "El usuario y contraseña son incorrectos"} );
       }
     }
     catch (Exception ex)
     {
+      await _requestLogger.SaveLog(HttpContext, 500, ex.Message);
       return StatusCode(500, new {error = true, message = "Ha ocurrido un error al momento de realizar la peticion, por favor contacte con el administrador"} );
     }
   }

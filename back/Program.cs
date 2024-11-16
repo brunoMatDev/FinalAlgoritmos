@@ -1,9 +1,6 @@
-//Este es nuestro metodo main implicito. Desde la version 7.0 de .NET Core, la funcion main ya no requiere ser declarada,
-//pero esto no quiere decir que no exista. Esta sigue funcionando de la misma manera que en las versiones anteriores. Solo
-//que ahora esta dentro de este archivo.
-//No es necesario profundizar en esto, ya que es un cambio de sintaxis mas que una cuestion funcional. Pero de querer hacerlo
-//investiguen 'instrucciones de nivel superior en un archivo como punto de entrada'.
 using System.Text;
+using ATDapi.Repositories;
+using ATDapi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -30,11 +27,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
-//Este es el espacio donde deberemos de construir los servicios que luego expondra nuestra API.
-//por ahora el unico que agregaremos es el servicio de Cors Policy ya visto anteriormente en clase.
-//pero tengan en cuenta que las politicas de autenticacion deberan ser declaradas en este espacio para
-//futuros proyectos que lo requieran. No es necesario que toquen este archivo.
 builder.Services.AddCors(options => 
     {
         options.AddDefaultPolicy(policy => {
@@ -42,13 +34,16 @@ builder.Services.AddCors(options =>
         });
     }
 );
-
+builder.Services.AddScoped<Repository>();
+builder.Services.AddScoped<RequestLogger>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//Aca termina el espacio de construccion de servicios.
-
-
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | 
+                                       Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+        });
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -56,9 +51,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseStaticFiles();
-
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

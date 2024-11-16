@@ -1,4 +1,4 @@
-namespace ATDapi.Models;
+namespace ATDapi.AuthModels.Models;
 public class UserLogedModel
 {
     public int Id { get; set; }
