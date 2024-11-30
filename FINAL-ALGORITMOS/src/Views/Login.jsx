@@ -27,6 +27,7 @@ export default function Login() {
   async function log() {
     setLoading(true);
     let rsp = await POST("Auth/Login", { username: username, password: password });
+    rsp = await rsp.json();
     if (rsp != undefined) {
       if (rsp.error == false) {
         localStorage.setItem('token', rsp.token);
@@ -44,20 +45,20 @@ export default function Login() {
   return (
     <div className="loginbg container-fluid d-flex justify-content-center align-items-center vh-100">
       <div className="card shadow-lg bg-dark" style={{ width: '400px', borderRadius: '15px', overflow: 'hidden' }}>
-        <div className="card-body text-center">
-          <h1 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 'bold', color: 'white' }}>Login</h1>
+        <div className="card-body text-center p-6">
+          <h1 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 'bold', color: 'white' }}>Iniciar Sesión</h1>
           <form>
             <div className="mb-3 inputs">
               <div style={{ position: "absolute", left: "-2px", top: "8px" }}>
                 <i className="bi bi-person-fill"></i>
-                <label style={{ fontSize: "13px" }} className="form-label">Username</label>
+                <label style={{ fontSize: "13px" }} className="form-label">Usuario</label>
               </div>
               <Input type="text" styles={{ borderRadius: '10px', textAlign: "center" }} max="30" classes={"form-control"} setData={setUsername} />
             </div>
             <div className="mb-3 inputs">
               <div style={{ position: "absolute", left: "-2px", top: "8px" }}>
                 <i className="bi bi-lock-fill"></i>
-                <label style={{ fontSize: "13px" }} className="form-label">Password</label>
+                <label style={{ fontSize: "13px" }} className="form-label">Contraseña</label>
               </div>
               <Input type="password" styles={{ borderRadius: '10px', textAlign: "center" }} max="30" classes={"form-control"} setData={setPassword} />
             </div>
@@ -83,10 +84,10 @@ export default function Login() {
                     text="Ingresar"
                     classes="btn btn-primary"
                     style={{ backgroundColor: '#6e8efb', border: 'none', padding: '10px 20px', fontSize: '18px', borderRadius: '10px', transition: '0.3s' }}
-                  />
-
-              }
+                    />
+                  }
             </div>
+                  <a href="home" className="text-secondary m-0 mt-1">Continuar sin iniciar sesión</a>
           </form>
         </div>
       </div>

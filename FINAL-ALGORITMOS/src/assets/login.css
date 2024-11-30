@@ -14,6 +14,14 @@ h1 {
   font-family:'Playwrite England SemiJoined';
 }
 
+.registerbg {
+  background-image: url("../../public/images/RegisterBackground.jpg");  
+  background-repeat: no-repeat;
+  background-size: 100% 110%;
+  margin: 0;
+  font-family:'Playwrite England SemiJoined';
+}
+
 .inputs{
   display: flex;
   align-items: center;
@@ -56,3 +64,4 @@ h1 {
     background-color: #0d6efd; /* Fondo azul al pasar el ratón */
     color: white; /* Texto blanco al pasar el ratón */
 }
+

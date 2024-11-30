@@ -20,7 +20,7 @@ public class RequestLogger(Repository repository)
     string endpoint = context.Request.Path.Value;
     DateTime date = DateTime.Now;
     string userAgent = context.Request.Headers["User-Agent"].ToString();
-    var parameters = new DynamicParameters();
+    DynamicParameters parameters = new();
     parameters.Add("@ip", ip);
     parameters.Add("@endpoint", endpoint);
     parameters.Add("@date_and_time", date);
@@ -28,7 +28,7 @@ public class RequestLogger(Repository repository)
     parameters.Add("@id_user", id ?? null);
     parameters.Add("@status_code", statusCode);
     parameters.Add("@message", message);
-    dynamic result = await repository.InsertProcedure("save_request_logs", parameters);
+    dynamic result = await repository.InsertByProcedure("save_request_logs", parameters);
     if (result > 0)
     {
       ConsoleLogger(null);

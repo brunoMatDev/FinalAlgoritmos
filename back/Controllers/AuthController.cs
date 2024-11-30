@@ -8,22 +8,17 @@ using System.Text;
 using ATDapi.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using ATDapi.Services;
-using System.Net;
+using Dapper;
+
+namespace ATDapi.Controllers;
 
 [ApiController]
 [Route("Auth")]
-public class AuthController : ControllerBase
+public class AuthController(IConfiguration configuration, RequestLogger requestLogger) : ControllerBase
 {
-  private IConfiguration _configuration;
-  RequestLogger _requestLogger;
-  private Repository repository = new();
-
-  public AuthController(IConfiguration configuration, RequestLogger requestLogger)
-  {
-    _configuration = configuration;
-    _requestLogger = requestLogger;
-
-  }
+  private readonly IConfiguration _configuration = configuration;
+  RequestLogger _requestLogger = requestLogger;
+  private readonly Repository repository = new();
 
   [HttpPost("Login")]
   public async Task<IActionResult> Login(LogInModel model)
@@ -35,8 +30,7 @@ public class AuthController : ControllerBase
       UserLogedModel? result = await repository.GetOneByQuery<UserLogedModel>(query);
       if (result != null)
       {
-        string userRol = result.Rol;
-        JwtSecurityToken claims = GenerateAccessToken(model.Username, userRol);
+        JwtSecurityToken claims = GenerateAccessToken(result.Id, result.Username, result.Rol);
         string token = new JwtSecurityTokenHandler().WriteToken(claims);
         message = string.Format("El usuario: {0}, id: {1}, inicio sesion exitosamente", result.Username, result.Id);
         await _requestLogger.SaveLog(HttpContext, 200, message);
@@ -56,49 +50,83 @@ public class AuthController : ControllerBase
     }
   }
 
-  [HttpGet("listar")]
-  [Authorize]
-  public async Task<BaseResponse> Listar()
+  [HttpPost("register")]
+  public async Task<IActionResult> Register(RegisterModel model)
   {
+    string message;
     try
     {
-      string rol = HttpContext.User.Claims.ElementAtOrDefault(1).Value;
-
-      if (rol != "administrator")
+      DynamicParameters parameters = new();
+      parameters.Add("@username", model.Username);
+      parameters.Add("@password", model.Password);
+      parameters.Add("@name", model.Name);
+      parameters.Add("@last_name", model.LastName);
+      int rowsAffected = await repository.InsertByProcedure("register_new_user", parameters);
+      if (rowsAffected > 0)
       {
-        return new BaseResponse(false, 401, "No tienes permisos para acceder");
+        message = string.Format("Se registro el usuario: {0} exitosamente", model.Username);
+        await _requestLogger.SaveLog(HttpContext, 200, message);
+        return Ok(new{ error = false, message = message });
       }
       else
       {
-        string query = UserLogedModel.ListUsers();
-        List<UserLogedModel> result = await repository.GetListBy<UserLogedModel>(query);
-
-        // if (result != null)
-        // {
-        //   return new DataResponse<List<LoginModel>>(true, 200, "Lista de usuarios", result);
-        // }
-        // else
-        // {
-          return new BaseResponse(false, 204, "No hay usuarios cargados!");
-        // }
-
+        message = string.Format("No se pudo registrar el usuario: {0}, podria ya estar en uso", model.Username);
+        await _requestLogger.SaveLog(HttpContext, 401, message);
+        return Unauthorized(new {error = true, message = message} );
       }
-
-
     }
     catch (Exception ex)
     {
-      return new BaseResponse(false, 500, $"error:{ex}");
+      await _requestLogger.SaveLog(HttpContext, 500, ex.Message);
+      return StatusCode(500, new {error = true, message = "Ha ocurrido un error al intentar registrarse, por favor contacte con el administrador"} );
     }
-
   }
 
-  private JwtSecurityToken GenerateAccessToken(string userName, string rol)
+  // [HttpGet("listar")]
+  // [Authorize]
+  // public async Task<BaseResponse> Listar()
+  // {
+  //   try
+  //   {
+  //     string rol = HttpContext.User.Claims.ElementAtOrDefault(1).Value;
+
+  //     if (rol != "administrator")
+  //     {
+  //       return new BaseResponse(false, 401, "No tienes permisos para acceder");
+  //     }
+  //     else
+  //     {
+  //       string query = UserLogedModel.ListUsers();
+  //       DynamicParameters parameters = new();
+  //       List<UserLogedModel> result = await repository.GetListByProcedure<UserLogedModel>(query, parameters);
+
+  //       if (result != null)
+  //       {
+  //         return new DataResponse<List<LoginModel>>(true, 200, "Lista de usuarios", result);
+  //       }
+  //       else
+  //       {
+  //         return new BaseResponse(false, 204, "No hay usuarios cargados!");
+  //       }
+
+  //     }
+
+
+  //   }
+  //   catch (Exception ex)
+  //   {
+  //     return new BaseResponse(false, 500, $"error:{ex}");
+  //   }
+
+  // }
+
+  private JwtSecurityToken GenerateAccessToken(int id, string userName, string rol)
   {
     var claims = new List<Claim>
         {
-            new Claim("username", userName),
-            new Claim("rol", rol)
+            new("id", id.ToString()),
+            new("username", userName),
+            new("rol", rol)
         };
 
     var token = new JwtSecurityToken(

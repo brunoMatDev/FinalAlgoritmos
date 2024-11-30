@@ -9,7 +9,6 @@ export async function GET(url, data){
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     })
-    .then((res) => res.json())
     .then((res) => res)
     .catch((err)=>console.log(err));
 }
@@ -24,7 +23,19 @@ export async function POST(url, data){
         },
         body: JSON.stringify(data)
         })
-        .then((res)=>res.json())
         .then((res)=>res)
         .catch((err)=> console.log(err))
+}
+
+export async function DELETE(url, data){
+  const objString = '?' + new URLSearchParams(data).toString();
+  return await fetch(backendurl + url + objString,{
+      method: 'DELETE',
+      mode: 'cors',
+      headers:{
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+  })
+  .then((res) => res)
+  .catch((err)=>console.log(err));
 }

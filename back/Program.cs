@@ -11,7 +11,10 @@ var configuration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .Build();
-
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5068);
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
