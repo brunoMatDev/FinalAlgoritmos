@@ -107,6 +107,7 @@ export default function Register() {
                     <FunctionButton
                       callback={Register}
                       text="Registrarse"
+                      type="button"
                       classes="btn btn-primary"
                       style={{ backgroundColor: '#6e8efb', border: 'none', padding: '10px 20px', fontSize: '18px', borderRadius: '10px', transition: '0.3s' }}
                     />

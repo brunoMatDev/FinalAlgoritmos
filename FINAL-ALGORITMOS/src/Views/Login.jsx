@@ -82,11 +82,14 @@ export default function Login() {
                   <FunctionButton
                     callback={log}
                     text="Ingresar"
+                    type="submit"
                     classes="btn btn-primary"
                     style={{ backgroundColor: '#6e8efb', border: 'none', padding: '10px 20px', fontSize: '18px', borderRadius: '10px', transition: '0.3s' }}
                     />
                   }
             </div>
+                  <a href="register" className="text-primary m-0 mt-1">¡Registrate aca!</a>
+                  <br/>
                   <a href="home" className="text-secondary m-0 mt-1">Continuar sin iniciar sesión</a>
           </form>
         </div>

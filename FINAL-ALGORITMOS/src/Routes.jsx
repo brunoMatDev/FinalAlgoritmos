@@ -20,9 +20,9 @@ export default function App() {
       <BrowserRouter>
         <userContext.Provider value={{ isLoggedIn, setIsLoggedIn, setShowModal }}>
           <Routes>
-            <Route path="/*" element={<Login />}></Route>
+            <Route path="/*" element={<Home />}></Route>
             <Route path="Register" element={<Register />}></Route>
-            <Route path="Home" element={<Home />}></Route>
+            <Route path="login" element={<Login />}></Route>
           </Routes>
         </userContext.Provider>
       </BrowserRouter>

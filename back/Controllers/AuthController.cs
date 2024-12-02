@@ -82,44 +82,6 @@ public class AuthController(IConfiguration configuration, RequestLogger requestL
     }
   }
 
-  // [HttpGet("listar")]
-  // [Authorize]
-  // public async Task<BaseResponse> Listar()
-  // {
-  //   try
-  //   {
-  //     string rol = HttpContext.User.Claims.ElementAtOrDefault(1).Value;
-
-  //     if (rol != "administrator")
-  //     {
-  //       return new BaseResponse(false, 401, "No tienes permisos para acceder");
-  //     }
-  //     else
-  //     {
-  //       string query = UserLogedModel.ListUsers();
-  //       DynamicParameters parameters = new();
-  //       List<UserLogedModel> result = await repository.GetListByProcedure<UserLogedModel>(query, parameters);
-
-  //       if (result != null)
-  //       {
-  //         return new DataResponse<List<LoginModel>>(true, 200, "Lista de usuarios", result);
-  //       }
-  //       else
-  //       {
-  //         return new BaseResponse(false, 204, "No hay usuarios cargados!");
-  //       }
-
-  //     }
-
-
-  //   }
-  //   catch (Exception ex)
-  //   {
-  //     return new BaseResponse(false, 500, $"error:{ex}");
-  //   }
-
-  // }
-
   private JwtSecurityToken GenerateAccessToken(int id, string userName, string rol)
   {
     var claims = new List<Claim>
@@ -133,7 +95,7 @@ public class AuthController(IConfiguration configuration, RequestLogger requestL
         issuer: _configuration["JwtSettings:Issuer"],
         audience: _configuration["JwtSettings:Audience"],
         claims: claims,
-        expires: DateTime.UtcNow.AddMinutes(30), // Token expiration time
+        expires: DateTime.UtcNow.AddMinutes(1), // Token expiration time
         signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"])), SecurityAlgorithms.HmacSha256)
     );
 
