@@ -37,6 +37,7 @@ builder.Services.AddCors(options =>
         });
     }
 );
+
 builder.Services.AddScoped<Repository>();
 builder.Services.AddScoped<RequestLogger>();
 builder.Services.AddControllers();

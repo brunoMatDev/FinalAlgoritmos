@@ -1,5 +1,5 @@
-// const backendurl = "http://localhost:5068/";
-const backendurl = "http://192.168.0.225:5068/";
+const backendurl = "http://localhost:5068/";
+// const backendurl = "http://192.168.100.25:5068/";
 
 export async function GET(url, data){
     const objString = '?' + new URLSearchParams(data).toString();

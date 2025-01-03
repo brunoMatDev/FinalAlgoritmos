@@ -7,13 +7,21 @@ namespace ATDapi.Repositories;
 
 public class Repository
 {
-  private string dbConnectionString = "SERVER=localhost;DATABASE=carrito_de_bruno;UID=sa;PWD=1234;TrustServerCertificate=True";
+  private readonly string _connectionString;
+  public Repository(IConfiguration configuration)
+  {
+      _connectionString = configuration.GetConnectionString("DefaultConnection");
+  }
+
+    public Repository()
+    {
+    }
+
+    private string dbConnectionString = "SERVER=localhost;DATABASE=carrito_de_bruno;UID=sa;PWD=1234;TrustServerCertificate=True";
   public async Task<int> DeleteAsync(string query)
   {
-    using (SqlConnection connection = new SqlConnection(dbConnectionString))
-    {
+      using SqlConnection connection = new SqlConnection(dbConnectionString);
       return await connection.ExecuteAsync(query);
-    }
   }
   public async Task<T> GetOneByQuery<T>(string query)
   {

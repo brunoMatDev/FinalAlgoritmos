@@ -9,10 +9,10 @@ namespace ATDapi.Controllers;
 
 [ApiController]
 [Route("products")]
-public class ProductController(RequestLogger requestLogger) : ControllerBase
+public class ProductController(RequestLogger requestLogger, IConfiguration configuration) : ControllerBase
 {
   RequestLogger _requestLogger = requestLogger;
-  private Repository repository = new();
+  private readonly Repository repository = new(configuration);
 
   [HttpGet("ListProducts")]
   public async Task<IActionResult> ListProducts(int page)
@@ -68,9 +68,9 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
   [HttpGet("recovercart")]
   public async Task<IActionResult> RecoverCart()
   {
-    string id_user = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
     try
     {
+      string id_user = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
       DynamicParameters parameters = new();
       parameters.Add("@id_user", id_user);
       List<ProductInCart> result = await repository.GetListByProcedure<ProductInCart>("recover_cart", parameters);
@@ -85,6 +85,7 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
     }
     catch (Exception ex)
     {
+      await _requestLogger.SaveLog(HttpContext, 500, ex.Message);
       return StatusCode(500, new { error = true, message = "No se pudo procesar la peticion en este momento" });
     }
   }
@@ -93,9 +94,9 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
   [HttpPost("removefromcart")]
   public async Task<IActionResult> RemoveFromCart(ModifyItemAmountModel item)
   {
-    string idUser = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
     try
     {
+      string idUser = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
       DynamicParameters parameters = new();
       parameters.Add("@id_user", idUser);
       parameters.Add("@id_item", item.IdItem);
@@ -111,6 +112,7 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
     }
     catch (Exception ex)
     {
+      await _requestLogger.SaveLog(HttpContext, 500, ex.Message);
       return StatusCode(500, new { error = true, message = "No se pudo procesar la peticion en este momento" });
     }
   }
@@ -119,9 +121,9 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
   [HttpPost("addtocart")]
   public async Task<IActionResult> AddToCart(ModifyItemAmountModel item)
   {
-    string idUser = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
     try
     {
+      string idUser = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
       DynamicParameters parameters = new();
       parameters.Add("@id_user", idUser);
       parameters.Add("@id_item", item.IdItem);
@@ -137,6 +139,7 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
     }
     catch (Exception ex)
     {
+      await _requestLogger.SaveLog(HttpContext, 500, ex.Message);
       return StatusCode(500, new { error = true, message = "No se pudo procesar la peticion en este momento" });
     }
   }
@@ -145,9 +148,9 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
   [HttpDelete("deleteitem")]
   public async Task<IActionResult> DeleteItem(int idItem)
   {
-    string id_user = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
     try
     {
+      string id_user = HttpContext.User.Claims.FirstOrDefault(item => item.Type == "id").Value;
       DynamicParameters parameters = new();
       parameters.Add("@id_user", id_user);
       parameters.Add("@id_item", idItem);
@@ -163,6 +166,7 @@ public class ProductController(RequestLogger requestLogger) : ControllerBase
     }
     catch (Exception ex)
     {
+      await _requestLogger.SaveLog(HttpContext, 500, ex.Message);
       return StatusCode(500, new { error = true, message = "No se pudo procesar la peticion en este momento" });
     }
   }

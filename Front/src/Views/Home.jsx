@@ -152,7 +152,7 @@ export default function Home() {
                             addItemLoading ?
                               <Spinner className='d-flex' />
                               :
-                              <Button className='d-flex bg-success' style={{ marginLeft: "auto", height: "40px" }} variant="primary" onClick={() => { setItemToAdd(product.id); }}>Añadir al carrito</Button>
+                              <Button className='d-flex bg-success' type="button" style={{ marginLeft: "auto", height: "40px" }} variant="primary" onClick={() => { setItemToAdd(product.id); }}>Añadir al carrito</Button>
                           }
                         </Card.Footer>
                       </Card.Body>

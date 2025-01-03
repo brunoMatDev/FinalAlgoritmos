@@ -5,7 +5,7 @@ export default function Pagination({ currentPage, onPageChange }){
       window.scrollTo({
         top: 250,
         left: 0,
-        behavior: 'smooth'  // Esto hará que el desplazamiento sea suave
+        behavior: 'smooth'
       });
     }
   };

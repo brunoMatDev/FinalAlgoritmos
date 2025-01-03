@@ -12,7 +12,6 @@ import { DELETE, GET, POST } from "../Services/Fetch";
 import { userContext } from "../Routes";
 
 export default function ShoppingCart({ item, loadingCart }) {
-  // Estado para el carrito de compras
   const [show, setShow] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = loadingCart;
@@ -20,6 +19,7 @@ export default function ShoppingCart({ item, loadingCart }) {
   const { isLoggedIn, setShowModal } = useContext(userContext);
   const [totalAmount, setTotalAmount] = useState(0);
   const [notLoggedModal, setNotLoggedModal] = useState(false);
+  const [comingSoon, setComingSoon] = useState(false);
 
   useEffect(() => {
     async function RecoverCart() {
@@ -217,7 +217,22 @@ export default function ShoppingCart({ item, loadingCart }) {
                   {/* {setTotalAmount(2)} */}
                 </ListGroup.Item>
               ))}
-              Total: ${totalAmount}
+              <div className="d-flex justify-content-between">
+                Total: ${totalAmount}
+                {
+                  comingSoon ? 
+                    <p>¡proximamente!</p>
+                  :
+                    <Button
+                      variant="btn btn-primary"
+                      size="sm"
+                      style={{ marginLeft: "20px" }}
+                      onClick={() => setComingSoon(true)}
+                    >
+                      Comprar
+                    </Button>
+                }
+              </div>
             </ListGroup>
           )}
         </Offcanvas.Body>

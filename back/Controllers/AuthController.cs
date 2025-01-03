@@ -66,13 +66,13 @@ public class AuthController(IConfiguration configuration, RequestLogger requestL
       {
         message = string.Format("Se registro el usuario: {0} exitosamente", model.Username);
         await _requestLogger.SaveLog(HttpContext, 200, message);
-        return Ok(new{ error = false, message = message });
+        return Ok(new{ error = false, message });
       }
       else
       {
         message = string.Format("No se pudo registrar el usuario: {0}, podria ya estar en uso", model.Username);
         await _requestLogger.SaveLog(HttpContext, 401, message);
-        return Unauthorized(new {error = true, message = message} );
+        return Unauthorized(new {error = true, message } );
       }
     }
     catch (Exception ex)
@@ -95,7 +95,7 @@ public class AuthController(IConfiguration configuration, RequestLogger requestL
         issuer: _configuration["JwtSettings:Issuer"],
         audience: _configuration["JwtSettings:Audience"],
         claims: claims,
-        expires: DateTime.UtcNow.AddMinutes(1), // Token expiration time
+        expires: DateTime.UtcNow.AddMinutes(30),
         signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"])), SecurityAlgorithms.HmacSha256)
     );
 
